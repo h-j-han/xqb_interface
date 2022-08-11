@@ -947,7 +947,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
 
 
 if __name__ == '__main__':
-    factory = BroadcastServerFactory(u"ws://127.0.0.1:9000")
+    factory = BroadcastServerFactory(u"ws://127.0.0.1:9001")
     factory.protocol = BroadcastServerProtocol
     listenWS(factory)
 

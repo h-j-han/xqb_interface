@@ -1,5 +1,5 @@
 var sockt;
-var socket_addr = "ws://localhost:9000";
+var socket_addr = "ws://localhost:9001";
 // var socket_addr = "ws://play.qanta.org:9000";
 var answer_json_dir = "http://localhost:8000/answers.0515.json";
 // var answer_json_dir = "http://play.qanta.org/answers.0212.json";
