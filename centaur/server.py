@@ -57,7 +57,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('server')
 haikunator = Haikunator()
 EW = ExpectedWins()
-
+ADMINID = 'hjhan'
 
 class BroadcastServerProtocol(WebSocketServerProtocol):
 
@@ -410,7 +410,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
             })
 
         try:
-            admin_player = [x for x in self.players.values() if x.player_name == 'ihsgnef'][0]
+            admin_player = [x for x in self.players.values() if x.player_name == ADMINID][0]
         except IndexError:
             return
 
@@ -524,36 +524,38 @@ class BroadcastServerFactory(WebSocketServerFactory):
         with visual elements like buzzing bells.
         '''
         text_plain = ''
-        text_highlighted = ''
+        # text_highlighted = ''
 
         words = self.question.tokens[:self.position]
-        highlight = self.cache_entry.text_highlight
+        # highlight = self.cache_entry.text_highlight
 
-        for i, (x, y) in enumerate(zip(words, highlight)):
+        # for i, (x, y) in enumerate(zip(words, highlight)):
+        for i, x  in enumerate(words):
             text_plain += x + ' '
-            x = highlight_template.format(x) if y else x
-            text_highlighted += x + ' '
+            # x = highlight_template.format(x) if y else x
+            # text_highlighted += x + ' '
             if i + 1 in self.bell_positions:
                 text_plain += BELL
-                text_highlighted += BELL
-        return text_plain, text_highlighted
+                # text_highlighted += BELL
+        return text_plain, text_plain #text_highlighted
 
     def get_display_matches(self):
         '''
         Get the current matches for display, both plain and highlighted.
         '''
-        matches = self.cache_entry.matches
-        highlights = self.cache_entry.matches_highlight
-        matches_plain = []
-        matches_highlighted = []
-        for i, (match, high) in enumerate(zip(matches, highlights)):
-            matches_plain.append('')
-            matches_highlighted.append('')
-            for x, y in zip(match, high):
-                matches_plain[i] += x + ' '
-                x = highlight_template.format(x) if y else x
-                matches_highlighted[i] += x + ' '
-        return matches_plain, matches_highlighted
+        # matches = self.cache_entry.matches
+        # highlights = self.cache_entry.matches_highlight
+        # matches_plain = []
+        # matches_highlighted = []
+        # for i, (match, high) in enumerate(zip(matches, highlights)):
+        #     matches_plain.append('')
+        #     matches_highlighted.append('')
+        #     for x, y in zip(match, high):
+        #         matches_plain[i] += x + ' '
+        #         x = highlight_template.format(x) if y else x
+        #         matches_highlighted[i] += x + ' '
+        # return matches_plain, matches_highlighted
+        return ['' for _ in range(4)], ['' for _ in range(4)]
 
     def last_chance(self, countdown):
         buzzing_ids = []

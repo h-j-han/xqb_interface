@@ -37,6 +37,9 @@ EXPLANATIONS = ['Alternatives', 'Evidence', 'Highlights_Question', 'Highlights_E
 ID_TO_CONFIG = []
 CONFIG_TO_ID = {}
 for config in itertools.product(*[[True, False] for x in EXPLANATIONS]):
+    if config[1] or config[2] or config[3]  or config[4]:
+        # Block all except for Alternatives
+        continue
     if (not config[1]) and config[3]:
         # evidence=False, highlight_evidence=True
         continue

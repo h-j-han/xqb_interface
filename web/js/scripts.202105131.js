@@ -5,6 +5,7 @@ var answer_json_dir = "http://localhost:8000/answers.0515.json";
 // var answer_json_dir = "http://play.qanta.org/answers.0212.json";
 // $("#consent_form").load("consent_form.html"); 
 
+var ADMINID = 'hjhan'; // start_new_round
 
 ///////// Message types ///////// 
 var MSG_TYPE_NEW = 0; // beginning of a new question
@@ -359,7 +360,7 @@ function new_question(msg) {
         console.log('setting completed to ' + task_completed);
         if (task_completed) {
             pause_button.click();
-            if (player_name == 'ihsgnef') {
+            if (player_name == ADMINID) {
                 console.log('showing resume button to admin');
                 admin_options.style.display = "block";
             }
@@ -675,7 +676,7 @@ function start() {
         } else if (msg.type === MSG_TYPE_COMPLETE) {
             task_completed = true;
             pause_button.click();
-            if (player_name == 'ihsgnef') {
+            if (player_name == ADMINID) {
                 console.log('showing resume button to admin');
                 admin_options.style.display = "block";
             }

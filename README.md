@@ -8,3 +8,5 @@
 
 ## Figures
 1. Install `vega-lite` globally: `npm install -g vega-cli`
+
+This repo is cloned from original [qb_interface](https://github.com/ihsgnef/qb_interface) repo.
