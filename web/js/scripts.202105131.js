@@ -56,6 +56,9 @@ var prediction_card_autopilot  = document.getElementById("prediction_card_autopi
 var alternatives_checkbox       = document.getElementById("alternatives_checkbox");
 var highlight_question_checkbox = document.getElementById("highlight_question_checkbox");
 var highlight_evidence_checkbox = document.getElementById("highlight_evidence_checkbox");
+var onlysrc_checkbox = document.getElementById("onlysrc_checkbox");
+var onlytgt_checkbox = document.getElementById("onlytgt_checkbox");
+var srctgt_checkbox = document.getElementById("srctgt_checkbox");
 var pause_modal_content = document.getElementById("pause_modal_content");
 
 
@@ -259,6 +262,18 @@ voice_checkbox.onclick = function() {
 highlight_question_checkbox.onclick = function() {
     update_question_display()
 };
+// show hide question highlights
+onlysrc_checkbox.onclick = function() {
+    update_question_display()
+};
+// show hide question highlights
+onlytgt_checkbox.onclick = function() {
+    update_question_display()
+};
+// show hide question highlights
+srctgt_checkbox.onclick = function() {
+    update_question_display()
+};
 
 ///////// Autocomplete ///////// 
 var fuzzyhound = new FuzzySearch();
@@ -303,8 +318,12 @@ window.addEventListener('beforeunload', function(){
 function update_question_display() {
     if (highlight_question_checkbox.checked) {
         question_area.innerHTML = question_text_color + '<br />' + info_text;
-    } else {
+    } else if (onlytgt_checkbox.checked) {
+        question_area.innerHTML = translation_text + '<br />' + info_text;
+    } else if (onlysrc_checkbox.checked) {
         question_area.innerHTML = question_text + '<br />' + info_text;
+    } else if (srctgt_checkbox.checked) {
+        question_area.innerHTML = question_text + '<br />' +  translation_text + '<br />' + info_text;
     }
 
     if (autopilot_checkbox.checked) {
@@ -321,6 +340,7 @@ function new_question(msg) {
     position = 0;
     curr_answer = ""
     question_text = '';
+    translation_text = '';
     question_text_color = '';
     info_text = '';
     answer_area.value = "";
@@ -507,6 +527,7 @@ function update_interpretation(msg) {
     }
     if (typeof msg.text != 'undefined') {
         question_text = msg.text;
+        translation_text = msg.text_trans;
         update_question_display();
     }
 

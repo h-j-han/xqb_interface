@@ -133,7 +133,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
         WebSocketServerFactory.__init__(self, url)
         self.db = SessionLocal()
 
-        self.round_number_list = [3, 4, 6, 8, 9, 10]
+        self.round_number_list = [0, 1]
         # self.round_number_list = [1]
         self.round_number_index = None
         self.question_index = None
@@ -156,6 +156,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
 
         self.room_id_base = 'room_1'
         self.room_id_and_round = None
+        self.avail_trans_model = ['wait3', 'human']
 
     def register(self, client):
         if client.peer not in self.socket_to_player:
@@ -369,7 +370,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
 
         round_number = self.round_number_list[self.round_number_index]
         round_str = f'0{round_number}' if round_number < 10 else str(round_number)
-        tournament_str = f'spring_novice_round_{round_str}'
+        tournament_str = f'xqb_initial_round_{round_str}'
         self.questions = self.db.query(Question).filter(Question.tournament.startswith(tournament_str)).all()
         logger.info('*********** new round *************')
         logger.info(f'{self.room_id_base} Loaded {len(self.questions)} questions for {tournament_str} (round {self.round_number_index + 1})')
@@ -527,7 +528,9 @@ class BroadcastServerFactory(WebSocketServerFactory):
         # text_highlighted = ''
 
         words = self.question.tokens[:self.position]
-        # highlight = self.cache_entry.text_highlight
+        target_pos = self.cache_entry.target_pos
+        trans_model = self.cache_entry.trans_model
+        text_trans = ' '.join(self.question.translations[trans_model].split()[:target_pos]) #TODO: bell pos in text_trans
 
         # for i, (x, y) in enumerate(zip(words, highlight)):
         for i, x  in enumerate(words):
@@ -537,7 +540,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
             if i + 1 in self.bell_positions:
                 text_plain += BELL
                 # text_highlighted += BELL
-        return text_plain, text_plain #text_highlighted
+        return text_plain, text_trans #text_highlighted
 
     def get_display_matches(self):
         '''
@@ -600,20 +603,21 @@ class BroadcastServerFactory(WebSocketServerFactory):
                 self.last_chance(6)
             else:
                 self.position += 1
-                self.cache_entry = self.db.query(QantaCache).get((self.question.id, self.position))
+                self.cache_entry = self.db.query(QantaCache).get((self.question.id, self.avail_trans_model[0], self.position))
 
-                text_plain, text_highlighted = self.get_display_question()
+                text_plain, text_trans = self.get_display_question()
                 matches_plain, matches_highlighted = self.get_display_matches()
                 score_for_buzz, score_for_wait = self.cache_entry.buzz_scores
                 autopilot_prediction = score_for_buzz > score_for_wait
 
                 autopilot_prediction = False
-                guesses = self.cache_entry.guesses
-                if len(guesses) >= 5:
-                    guesses = guesses[:5]
-                    score_sum = sum([s for x, s in guesses])
+                onlyguesses = self.cache_entry.guesses
+                scores = self.cache_entry.guess_scores
+                if len(onlyguesses) >= 5:
+                    onlyguesses = onlyguesses[:5]
+                    score_sum = sum([s for x, s in zip(onlyguesses,scores)])
                     if score_sum > 0:
-                        guesses = [(x, s / score_sum) for x, s in guesses]
+                        guesses = [(x, s / score_sum) for x, s in  zip(onlyguesses,scores)]
                     if guesses[0][1] - guesses[1][1] > 0.05:
                         autopilot_prediction = True
 
@@ -621,7 +625,8 @@ class BroadcastServerFactory(WebSocketServerFactory):
                     'type': MSG_TYPE_RESUME,
                     'qid': self.question.id,
                     'text': text_plain,
-                    'text_highlighted': text_highlighted,
+                    'text_trans': text_trans,
+                    'text_highlighted': text_plain,
                     'position': self.position,
                     'length': self.question.length,
                     'guesses': guesses,

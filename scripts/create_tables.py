@@ -1,5 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, Float, String, TIMESTAMP
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB, ARRAY
 from sqlalchemy import Table, MetaData
 
 from centaur.models import Player, Question
@@ -11,10 +11,13 @@ meta = MetaData()
 Table(
     'question', meta,
     Column('id', String, primary_key=True, index=True),
+    Column('xqb_id', Integer, nullable=False),
     Column('answer', String, nullable=False),
-    Column('raw_text', JSONB, nullable=False),
+    Column('raw_text', ARRAY(String()), nullable=False),
     Column('length', Integer, nullable=False),
-    Column('tokens', JSONB, nullable=False),
+    Column('tokens', ARRAY(String()), nullable=False),
+    Column('avail_trans', ARRAY(String()), nullable=False),
+    Column('translations', JSONB),
     Column('tournament', String),
     Column('meta', JSONB),
 )
@@ -51,12 +54,15 @@ Table(
 Table(
     'qantacache', meta,
     Column('question_id', String, ForeignKey(Question.id), primary_key=True),
+    Column('trans_model', String, primary_key=True),
     Column('position', Integer, primary_key=True),
     Column('answer', String, nullable=False),
-    Column('guesses', JSONB),
-    Column('buzz_scores', JSONB),
+    Column('target_pos', Integer),
+    Column('guesses', ARRAY(String())),
+    Column('guess_scores', ARRAY(Float())),
+    Column('buzz_scores', ARRAY(Integer())),
     Column('matches', JSONB),
-    Column('text_highlight', JSONB),
+    Column('text_highlight', ARRAY(Integer())),
     Column('matches_highlight', JSONB),
 )
 
