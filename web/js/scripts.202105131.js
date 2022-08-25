@@ -323,7 +323,7 @@ function update_question_display() {
     } else if (onlysrc_checkbox.checked) {
         question_area.innerHTML = question_text + '<br />' + info_text;
     } else if (srctgt_checkbox.checked) {
-        question_area.innerHTML = question_text + '<br />' +  translation_text + '<br />' + info_text;
+        question_area.innerHTML =  '<span style="color:silver;">' + 'Source : ' + '<br />' +  question_text + '</span>' + '<br />' + 'Target  : ' + '<br />' +  translation_text + '<br />' + info_text;
     }
 
     if (autopilot_checkbox.checked) {
