@@ -355,6 +355,7 @@ function new_question(msg) {
     if (typeof msg.room_id != 'undefined') {
         question_title.innerHTML = '[' + msg.room_id + '] ' + msg.tournament + ' Question ' + msg.question_index + '/' + msg.n_questions;
         // question_title.innerHTML =  "Polish Quizbowl Game with Simultaneous MT"
+        // question_title.innerHTML = 'Spanish Quizbowl Game with Simultaneous MT'
     } else {
         question_title.innerHTML = qid;
         // question_title.innerHTML =  "Polish Quizbowl Game with Simultaneous MT"

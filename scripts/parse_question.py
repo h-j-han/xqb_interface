@@ -7,6 +7,7 @@ import sqlalchemy
 engine = create_engine(settings.SQLALCHEMY_DATABASE_URL)
 
 # file_path = os.path.join(os.getenv("MYHOME"), 'gits/xqb_interface/data/df4sql_xqb_initial_question.pickle')
+# file_path = os.path.join(os.getenv("MYHOME"), 'gits/xqb_interface/data/df4sql_xqbes_initial_question_mod.pickle')
 file_path = os.path.join(os.getenv("MYHOME"), 'gits/xqb_interface/data/df4sql_xqb_feetthinking_question.pickle')
 with open(file_path, 'rb') as f:
     df = pickle.load(f)
