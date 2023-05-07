@@ -1,3 +1,4 @@
+import os
 import sys
 import json
 import uuid
@@ -52,8 +53,12 @@ from centaur.db.session import SessionLocal
 from centaur.models import Question, Player, Record, QantaCache, PlayerRoundStat
 from centaur.expected_wins import ExpectedWins
 
-
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    stream=sys.stdout,
+    level=os.environ.get("LOGLEVEL", "INFO").upper(),
+    format="%(asctime)s %(message)s",
+    # format="%(asctime)s [%(filename)s,%(funcName)s] %(message)s",
+)
 logger = logging.getLogger('server')
 haikunator = Haikunator()
 EW = ExpectedWins()
@@ -156,7 +161,8 @@ class BroadcastServerFactory(WebSocketServerFactory):
 
         self.room_id_base = 'room_1'
         self.room_id_and_round = None
-        self.avail_trans_model = ['wait3', 'human']
+        # self.avail_trans_model = ['wait3', 'human']
+        self.avail_trans_model = ['bigwk3.tok.v1', 'bigwk6.tok.v1', 'bigwk9.tok.v1', 'bigwk12.tok.v1', 'bigwk15.tok.v1', 'bigwk20.tok.v1', 'ht512']
 
     def register(self, client):
         if client.peer not in self.socket_to_player:
@@ -370,7 +376,8 @@ class BroadcastServerFactory(WebSocketServerFactory):
 
         round_number = self.round_number_list[self.round_number_index]
         round_str = f'0{round_number}' if round_number < 10 else str(round_number)
-        tournament_str = f'xqb_initial_round_{round_str}'
+        # tournament_str = f'xqb_initial_round_{round_str}'
+        tournament_str = f'xqb_feetthinking_round_{round_str}'
         self.questions = self.db.query(Question).filter(Question.tournament.startswith(tournament_str)).all()
         logger.info('*********** new round *************')
         logger.info(f'{self.room_id_base} Loaded {len(self.questions)} questions for {tournament_str} (round {self.round_number_index + 1})')
@@ -401,7 +408,8 @@ class BroadcastServerFactory(WebSocketServerFactory):
             print('{:<3}  {:<20}  {:<50}  {:<3}  {:<5}'.format(i, player.name, player.email, qb_score, player_ew_scores[player_id]))
         print('===================')
         print()
-        pause_msg = f'{self.room_id_base} Round {self.round_number_index+1} complete. Please visit </br><a href="https://cutt.ly/human_ai_spring_novice">https://cutt.ly/human_ai_spring_novice</a></br>for next round room assignment'
+        # pause_msg = f'{self.room_id_base} Round {self.round_number_index+1} complete. Please visit </br><a href="https://cutt.ly/human_ai_spring_novice">https://cutt.ly/human_ai_spring_novice</a></br>for next round room assignment'
+        pause_msg = f'{self.room_id_base} Round {self.round_number_index+1} complete. If you want to try out this interface without a room assignment, please enter 0.'
         print(pause_msg)
 
         for player_id, player in self.players.items():
@@ -448,6 +456,8 @@ class BroadcastServerFactory(WebSocketServerFactory):
             if self.question is None:
                 self.end_of_round()
                 return
+            # assign random translation hopefull this has uniform distribution of records across the available translations
+            self.question.randn = random.randint(0, len(self.avail_trans_model)- 1)
 
             self.info_text = ''
             self.bell_positions = []
@@ -603,8 +613,10 @@ class BroadcastServerFactory(WebSocketServerFactory):
                 self.last_chance(6)
             else:
                 self.position += 1
-                self.cache_entry = self.db.query(QantaCache).get((self.question.id, self.avail_trans_model[0], self.position))
-
+                self.cache_entry = self.db.query(QantaCache).get((self.question.id, self.avail_trans_model[self.question.randn], self.position))
+                # debugging for None cache_entry
+                if self.cache_entry is None:
+                    print(f"NONE {self.question.id=},{self.avail_trans_model[self.question.randn]=},{self.position=},{self.question.length=}")
                 text_plain, text_trans = self.get_display_question()
                 matches_plain, matches_highlighted = self.get_display_matches()
                 score_for_buzz, score_for_wait = self.cache_entry.buzz_scores

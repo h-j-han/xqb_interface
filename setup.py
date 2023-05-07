@@ -6,12 +6,12 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name="augment",
     version="0.0.1",
-    author="Shi Feng",
-    author_email="sjtufs@gmail.com",
-    description="Code for http://play.qanta.org",
+    author="HyoJung",
+    author_email="hjhan@cs.umd.edu",
+    description="Code for http://simqa.cs.umd.edu",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/ihsgnef/qb_interface",
+    url="https://github.com/h-j-han/xqb_interface",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -19,4 +19,12 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.7',
+    install_requires=[
+        'pandas',
+        'sqlalchemy',
+        'psycopg2-binary',
+        'autobahn',
+        'twisted',
+        
+    ]
 )

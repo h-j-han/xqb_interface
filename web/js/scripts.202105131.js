@@ -1,5 +1,5 @@
 var sockt;
-var socket_addr = "ws://localhost:9001";
+var socket_addr = "ws://simqa.cs.umd.edu:9001";
 // var socket_addr = "ws://play.qanta.org:9000";
 var answer_json_dir = "http://localhost:8000/answers.0515.json";
 // var answer_json_dir = "http://play.qanta.org/answers.0212.json";
@@ -137,7 +137,8 @@ function deleteAllCookies() {
 pause_button.onclick = function(event) {
     $('#pause_modal').modal('show');
     if (task_completed) {
-        pause_modal_content.innerHTML = 'Round finished. Please visit </br><a href="https://cutt.ly/human_ai_spring_novice">https://cutt.ly/human_ai_spring_novice</a></br>for next round room assignment.';
+        // pause_modal_content.innerHTML = 'Round finished. Please visit </br><a href="https://cutt.ly/human_ai_spring_novice">https://cutt.ly/human_ai_spring_novice</a></br>for next round room assignment.';
+        pause_modal_content.innerHTML = 'Round finished. <br> If you want to try out this interface without a room assignment, please enter 0.';
     }
     clearTimeout(timer_timeout);
     timer_set = false;
@@ -316,15 +317,16 @@ window.addEventListener('beforeunload', function(){
     window.speechSynthesis.cancel();});
 
 function update_question_display() {
-    if (highlight_question_checkbox.checked) {
-        question_area.innerHTML = question_text_color + '<br />' + info_text;
-    } else if (onlytgt_checkbox.checked) {
-        question_area.innerHTML = translation_text + '<br />' + info_text;
-    } else if (onlysrc_checkbox.checked) {
-        question_area.innerHTML = question_text + '<br />' + info_text;
-    } else if (srctgt_checkbox.checked) {
-        question_area.innerHTML =  '<span style="color:silver;">' + 'Source : ' + '<br />' +  question_text + '</span>' + '<br />' + 'Target  : ' + '<br />' +  translation_text + '<br />' + info_text;
-    }
+    // if (highlight_question_checkbox.checked) {
+    //     question_area.innerHTML = question_text_color + '<br />' + info_text;
+    // } else if (onlytgt_checkbox.checked) {
+    //     question_area.innerHTML = translation_text + '<br />' + info_text;
+    // } else if (onlysrc_checkbox.checked) {
+    //     question_area.innerHTML = question_text + '<br />' + info_text;
+    // } else if (srctgt_checkbox.checked) {
+    //     question_area.innerHTML =  '<span style="color:silver;">' + 'Source : ' + '<br />' +  question_text + '</span>' + '<br />' + 'Target  : ' + '<br />' +  translation_text + '<br />' + info_text;
+    // }
+    question_area.innerHTML =  '<span style="color:silver;">' + 'Source : ' + '<br />' +  question_text + '</span>' + '<br />' + 'Target  : ' + '<br />' +  translation_text + '<br />' + info_text;
 
     if (autopilot_checkbox.checked) {
         prediction_card_autopilot.style.display = "block";
@@ -352,8 +354,10 @@ function new_question(msg) {
 
     if (typeof msg.room_id != 'undefined') {
         question_title.innerHTML = '[' + msg.room_id + '] ' + msg.tournament + ' Question ' + msg.question_index + '/' + msg.n_questions;
+        // question_title.innerHTML =  "Polish Quizbowl Game with Simultaneous MT"
     } else {
         question_title.innerHTML = qid;
+        // question_title.innerHTML =  "Polish Quizbowl Game with Simultaneous MT"
     }
 
     for (var i = 0; i < 5; i++) {
