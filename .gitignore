@@ -1,5 +1,6 @@
 data
 data_backup
+run*.sh
 __pycache__
 *.swp
 auto_fig
@@ -7,3 +8,4 @@ auto_fig
 .ipynb_checkpoints
 *.pyc
 .DS_Store
+centaur/config/settings.py
