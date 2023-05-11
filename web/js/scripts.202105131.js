@@ -4,7 +4,7 @@ var socket_addr = "ws://127.0.0.1:9000";
 // var socket_addr = "ws://play.qanta.org:9000";
 var answer_json_dir = "http://localhost:8000/answers.0515.json";
 // var answer_json_dir = "http://play.qanta.org/answers.0212.json";
-// $("#consent_form").load("consent_form.html"); 
+$("#consent_form").load("consent_form.html"); 
 
 var ADMINID = 'hjhan'; // start_new_round
 
@@ -354,7 +354,9 @@ function new_question(msg) {
     answer_group.style.display = "none";
 
     if (typeof msg.room_id != 'undefined') {
-        question_title.innerHTML = '[' + msg.room_id + '] ' +'(' + msg.test_text + ') ' + msg.tournament + ' Question ' + msg.question_index + '/' + msg.n_questions;
+        // question_title.innerHTML = '[' + msg.room_id + '] ' +'(' + msg.test_text + ') ' + msg.tournament + ' Question ' + msg.question_index + '/' + msg.n_questions;
+        // question_title.innerHTML = '[' + msg.room_id + '] '  + ' Question ' + msg.question_index + '/' + msg.n_questions;
+        question_title.innerHTML = 'Question ' + msg.question_index + '/' + msg.n_questions;
         // question_title.innerHTML =  "Polish Quizbowl Game with Simultaneous MT"
         // question_title.innerHTML = 'Spanish Quizbowl Game with Simultaneous MT'
     } else {

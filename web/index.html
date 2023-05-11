@@ -35,7 +35,13 @@
           </div>
           <div class="modal-body">
               <div id="consent_form"></div>
-              <div>Please use the email address that you used to sign up for the tournament.</div></br>
+              <div>Please use the email address that you used to sign up for the tournament.
+                <!-- <br /> Statement of Consent: By clicking "Join", you indicate that
+                you are at least 18 years of age; you have read this consent form or have had it read to
+                you; your questions have been answered to your satisfaction and you voluntarily agree to
+                participate in this research study.<br /> 
+                * I consent to participate in this study. -->
+              </div></br>
               <form id="gform" method="POST" class="pure-form pure-form-stacked"
                     action="https://script.google.com/macros/s/AKfycbwD2r1mQgJMmMjV2R6lWuKrv9zeUM9hgGqsl5XfoVO24tJ-2rE/exec">
                   <div class="form-group">
@@ -98,7 +104,7 @@
         <div class="row" data-step="2" data-intro="This is what the interface might look like in the middle of a question.">
             <div class="col-md-3">
                 <div class="row mt-3"></br></br></div>
-                <div id="alternatives_card" class="card card-outline-primary mt-3" data-step="6" data-intro="<b>Alternatives</b> from
+                <div id="alternatives_card" class="card card-outline-primary mt-3" data-step="6" style="display: None"  data-intro="<b>Alternatives</b> from
                     Qanta are shown here.">
                     <div class="card-body mx-2 my-2">
                         <h4 class="card-title">Alternatives</h4>
@@ -134,7 +140,7 @@
                     <!-- change color or button and progress bar -->
                     <button type="submit" class="btn btn-info"
                         style="width:10%; margin-left:17px;" id="buzz_button"
-                        data-step="5" data-intro="Click this button or press
+                        data-step="4" data-intro="Click this button or press
                         <code>space</code> to buzz, type or select answer from the
                         dropdown menu, then press <code>enter</code> to submit."> Buzz </button>
                     <div class="progress progress-striped active pull-left" style="width:84%; margin: 0px auto; height: 40px;">
@@ -156,11 +162,11 @@
     name="answer_area" type="text" placeholder="Press enter to submit" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: system-ui; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><div class="tt-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none;"></div></span></div>
                 </div>
 
-                <div class="card card-outline-primary mt-1" data-step="3" data-intro="Questions are displayed here.">
+                <div class="card card-outline-primary mt-1" data-step="3" data-intro="Questions are displayed here. Both original source and translated target text will be displayed incrementally. Please note that the delivery of the translation text can be either immediate or slow.">
                     <div class="card-body my-2 mx-2">
                         <h4 class="card-title" id="question_title">Question</h4>
                         <a class="card-text" id="question_area">
-                            These <mark data-entity="person">particles</mark> are solvated in strongly reducing solutions, such as that <mark data-entity="person">used</mark> in the Birch reduction. The <mark data-entity="person">charge</mark> of these <mark data-entity="person">particles</mark> was measured in an <mark data-entity="person">experiment</mark> that balanced the <mark data-entity="person">gravitational</mark> and buoyant <mark data-entity="person">forces</mark> acting on <mark data-entity="person">drops</mark> of (*) oil against
+                            <span style="color:silver;"> Source :  <br /> Sygnalista postawił także zarzut, że prawnicy Białego Domu kazali urzędnikom  </span>  <br /> Target  :  <br /> The signalist also accused the lawyers of the White House ordered officials to remove a record of a conversation from <br />
                         </a>
                     </div>
                 </div>
@@ -190,7 +196,7 @@
             </div>
             <div class="col-md-4">
                 <div class="row mt-3"></br></br></div>
-                <div id="evidence_card" class="card card-outline-primary mt-3"
+                <div id="evidence_card" class="card card-outline-primary mt-3"  style="display: None"
                     data-step="7" data-intro="The <b>evidence</b> of Qanta's prediction
                     is shown here. Each line is a snippet from either a previous
                     quizbowl question or Wikipedia page. <b>Highlights</b> shows the most important words." >
@@ -207,11 +213,11 @@
                     </div>
                 </div>
                 <!-- div class="row mt-3"></br></br></br></br></br></br></br></div -->
-                <div class="card card-outline-primary mt-3" data-step="9"
+                <div class="card card-outline-primary mt-3" data-step="9" style="display: None"
                     data-intro="At each round you are randomly given access to
                     some of the information from Qanta. They are listed here.
                     Note that <b>Highlights</b> affects both the question and the evidence.">
-                    <div class="card-body my-2 mx-2">
+                    <div class="card-body my-2 mx-2" >
                         <h4 class="card-title">Visualizations</h4>
                         <div class="checkbox">
                             <label><input type="checkbox" value=""
@@ -258,11 +264,11 @@
 
                     </div>
                 </div>
-                <div id="players_card" class="card card-outline-primary mt-3"
+                <div id="players_card" style="display: None" class="card card-outline-primary mt-3"
                     data-step="10" data-intro="Players are shown here. Stat
                     shows the number of questions answered correctly and
                     incorrectly. Inactive players are shown in grey.">
-                    <div class="card-body mx-2 my-2">
+                    <div class="card-body mx-2 my-2"  >
                         <h4 class="card-title">Players</h4>
                         <a id="n_active"> 2 active </a>
                         <table class="table table-sm table-hover" id="players_table">

@@ -144,6 +144,9 @@ class BroadcastServerFactory(WebSocketServerFactory):
         self.room_id_base = "ready room"
         self.all_paused = True 
         self.deferreds = []
+        self.tournament_str = f'xqb_feetthinking_round'
+        self.tmpquestions = self.db.query(Question).filter(Question.tournament.startswith(self.tournament_str + '_00')).all()
+        self.tmpquestion =self.tmpquestions[0]
     def check_player_response(self, player, key, value):
         return (
             player.active
@@ -226,10 +229,12 @@ class BroadcastServerFactory(WebSocketServerFactory):
                         'player_list': self.player_list,
                         'info_text': "",
                         'history_entries': [], #self.history_entries,
-                        'length': length,
+                        'length': self.tmpquestion.length,
                         'position': 0, #self.position,
                         'task_completed': True, #self.all_paused,
                         'room_id': self.room_id_base,
+                        'question_index': 1,
+                        'n_questions': len(self.tmpquestions), 
                         'test_text': self.players[player_id].client.peer + "register",
                     }
                     # if self.question is not None:
@@ -249,7 +254,12 @@ class BroadcastServerFactory(WebSocketServerFactory):
                     #     self.players[player_id].sendMessage(self.latest_buzzing_msg)
 
                     if new_player.response.get('start_new_round', False):
-                        chosen_round = int(new_player.response.get('chosen_round', 0))
+                        chosen_round_text = new_player.response.get('chosen_round', 0)
+                        chosen_round = int(chosen_round_text)
+                        # new_player.sendMessage({
+                        #     'type': MSG_TYPE_COMPLETE,
+                        #     'message': "Input should be integer!",
+                        # })
                         # next round index = chosen_round - 1
                         # if chosen_round is 0, go to default next round
                         self.socket_to_round[client.peer] = RoundSession(self.db, self.room_number, self.players[player_id])
@@ -327,7 +337,7 @@ class RoundSession():
     def __init__(self, db, room_number=0, new_player=None):
         self.db = db
 
-        self.round_number_list = [0, 1]
+        self.round_number_list = [0, 1,2]
         # self.round_number_list = [1]
         self.round_number_index = None
         self.question_index = None

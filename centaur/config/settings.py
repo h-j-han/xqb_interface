@@ -1,6 +1,6 @@
 CODE_DIR = '/Users/hjhan/gits/qb_interface'
 DATA_DIR = f'{CODE_DIR}/data'
-SQLALCHEMY_DATABASE_URL = 'postgresql+psycopg2://hjhan@localhost:5433/xqb_20220810'
+SQLALCHEMY_DATABASE_URL = 'postgresql+psycopg2://hjhan@localhost:5433/xqb_feetthinking_20230506'
 # SQLALCHEMY_DATABASE_URL = 'postgresql+psycopg2://hjhan@localhost:5433/xqbes_20221116'
 # SQLALCHEMY_DATABASE_URL = 'postgresql+psycopg2://hjhan@localhost:5433/augment_20210515_final'
 # SQLALCHEMY_DATABASE_URL = 'postgresql+psycopg2://hjhan@localhost:5433/augment_20210515_initial_with_pace'
