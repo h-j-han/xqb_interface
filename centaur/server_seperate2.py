@@ -185,6 +185,13 @@ class BroadcastServerFactory(WebSocketServerFactory):
                         self.socket_to_player.pop(old_peer, None)
                         self.players[player_id].active = True
                         logger.info(f"{self.room_id_base} [register] old player {player_name} {player_email} ({old_peer} -> {client.peer}) {player_id=}")
+                        if old_peer in self.socket_to_round:
+                            logger.info(f"{self.socket_to_round}")
+                            roundsession = self.socket_to_round.pop(old_peer)
+                            self.socket_to_round[client.peer] = roundsession
+                            tmpplayer = roundsession.socket_to_player.pop(old_peer)
+                            roundsession.socket_to_player[client.peer] = tmpplayer
+                            logger.info(f"{self.socket_to_round}")
                     else:
                         new_player.player_id = player_id
                         new_player.player_name = player_name
@@ -297,18 +304,19 @@ class BroadcastServerFactory(WebSocketServerFactory):
                 self.deferreds.append((deferred, condition))
         logger.info(f"{self.room_id_base} [register] End of register function")
     def receive(self, msg, client):
+        # logger.info(f"Upper recieve {client.peer} {self.socket_to_round=}")
         try:
             self.socket_to_round[client.peer].receive(msg, client)
         except:
             self.receive_ready(msg, client)
     def unregister(self, client):
         if client.peer in self.socket_to_round:
-            logger.info(f"Before {self.socket_to_round.keys()=}")
+            # logger.info(f"Before {self.socket_to_round.keys()=}")
             tobedelted = self.socket_to_round.pop(client.peer)
             logger.info(f"deleting object {tobedelted.room_number=} {client.peer}")
             tobedelted.unregister(client=client)
             del tobedelted
-            logger.info(f"After {self.socket_to_round.keys()=}")
+            # logger.info(f"After {self.socket_to_round.keys()=}")
         else:
             logger.info(f"trying to delete {client.peer}")
     def receive_ready(self, msg, client):
@@ -374,6 +382,15 @@ class RoundSession():
             logger.info(f"{self.room_id_base} [unregister] player {player.player_name} inactive")
 
     def check_player_response(self, player, key, value):
+        # logger.info("++++++++++++++++++++++++++++++++++++++++++++")
+        # logger.info(f"{player.player_name=}")
+        # logger.info(f"{player.player_id=}")
+        # logger.info(f"{player.client.peer=}")
+        # logger.info(f"{player.active=}")
+        # logger.info(f"{player.response=}")
+        # logger.info(f"key in player.response : {key in player.response}")
+        # logger.info(f"player.response.get(key, None) == value : {player.response.get(key, None) == value}")
+        # logger.info("++++++++++++++++++++++++++++++++++++++++++++")
         return (
             player.active
             and player.response is not None
