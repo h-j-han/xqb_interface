@@ -1011,6 +1011,7 @@ class RoundSession():
                     qb_score=player.buzz_info.get('qb_score', None),
                     ew_score=player.buzz_info.get('ew_score', None),
                     explanation_config=json.dumps(player.explanation_config),
+                    translation_type=self.avail_trans_model[self.question.randn],
                     mediator_name=player.mediator.__class__.__name__,
                     room_id=self.room_id_and_round,
                     player_list=self.player_list,

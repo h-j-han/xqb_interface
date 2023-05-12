@@ -17,6 +17,7 @@ class Record(Base):
     qb_score = Column(Integer)
     ew_score = Column(Float)
     explanation_config = Column(String)
+    translation_type = Column(String)
     mediator_name = Column(String)
     room_id = Column(String)
     player_list = Column(JSONB)
