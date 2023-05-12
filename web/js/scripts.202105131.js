@@ -1,6 +1,6 @@
 var sockt;
-var socket_addr = "ws://simqa.cs.umd.edu:9000";
-// var socket_addr = "ws://127.0.0.1:9000";
+// var socket_addr = "ws://simqa.cs.umd.edu:9000";
+var socket_addr = "ws://127.0.0.1:9000";
 // var socket_addr = "ws://play.qanta.org:9000";
 var answer_json_dir = "http://localhost:8000/answers.0515.json";
 // var answer_json_dir = "http://play.qanta.org/answers.0212.json";
@@ -30,7 +30,9 @@ var SECOND_PER_WORD = 0.3;
 var accept_button      = document.getElementById("accept_button");
 var username_area      = document.getElementById("choose_user_name");
 var email_area         = document.getElementById("emailAddress");
-var question_area      = document.getElementById("question_area");
+// var question_area      = document.getElementById("question_area");
+var question_area_src      = document.getElementById("question_area_src");
+var question_area_tgt      = document.getElementById("question_area_tgt");
 var question_title     = document.getElementById("question_title");
 var answer_area        = document.getElementById("answer_area");
 var alternatives_card  = document.getElementById("alternatives_card");
@@ -139,7 +141,7 @@ pause_button.onclick = function(event) {
     $('#pause_modal').modal('show');
     if (task_completed) {
         // pause_modal_content.innerHTML = 'Round finished. Please visit </br><a href="https://cutt.ly/human_ai_spring_novice">https://cutt.ly/human_ai_spring_novice</a></br>for next round room assignment.';
-        pause_modal_content.innerHTML = 'Round finished or New Start. <br> If you want to try out this interface, please enter 0. <br> Currently available rounds : 1,2,3,4,5,6,7,8,9,10. <br> Please enter integer between 0-10.';
+        pause_modal_content.innerHTML = 'New Start. <br> If you want to try out this interface, please enter 0. <br> Currently available rounds : 1,2 <br> Please enter integer between 0-2.';
     }
     clearTimeout(timer_timeout);
     timer_set = false;
@@ -327,7 +329,18 @@ function update_question_display() {
     // } else if (srctgt_checkbox.checked) {
     //     question_area.innerHTML =  '<span style="color:silver;">' + 'Source : ' + '<br />' +  question_text + '</span>' + '<br />' + 'Target  : ' + '<br />' +  translation_text + '<br />' + info_text;
     // }
-    question_area.innerHTML =  '<span style="color:silver;">' + 'Source : ' + '<br />' +  question_text + '</span>' + '<br />' + 'Target  : ' + '<br />' +  translation_text + '<br />' + info_text;
+    question_area_src.innerHTML =  '<span style="color:silver;">' + 'Source : ' + '<br />' +  question_text + '</span>' + info_text;
+    if (translation_type === 'source'){
+        question_area_tgt.innerHTML = 'No target provided. Try to guess without a translation!';
+    } else {
+        if (translation_text.length === 0 ){
+
+            question_area_tgt.innerHTML =  'Target  : '+ '<span style="color:ghostwhite;">' + translation_type + '</span>' + '<br />' + '<span style="color:silver;">' + '...(translating)...' + '</span>';
+        } else{
+            question_area_tgt.innerHTML =  'Target  : '+ '<span style="color:ghostwhite;">' + translation_type + '</span>' + '<br />' +  translation_text ;//+ '<br />' //+ info_text;
+        }
+    }
+
 
     if (autopilot_checkbox.checked) {
         prediction_card_autopilot.style.display = "block";
@@ -344,6 +357,7 @@ function new_question(msg) {
     curr_answer = ""
     question_text = '';
     translation_text = '';
+    translation_type = '';
     question_text_color = '';
     info_text = '';
     answer_area.value = "";
@@ -356,7 +370,10 @@ function new_question(msg) {
     if (typeof msg.room_id != 'undefined') {
         // question_title.innerHTML = '[' + msg.room_id + '] ' +'(' + msg.test_text + ') ' + msg.tournament + ' Question ' + msg.question_index + '/' + msg.n_questions;
         // question_title.innerHTML = '[' + msg.room_id + '] '  + ' Question ' + msg.question_index + '/' + msg.n_questions;
-        question_title.innerHTML = 'Question ' + msg.question_index + '/' + msg.n_questions;
+
+        question_title.innerHTML = 'Question ' + msg.question_index + '/' + msg.n_questions ; //+ '<span style="color:snow;">' + ' [' + msg.room_id + '] ' + msg.tournament +  '</span>';
+        // question_title.innerHTML = 'Question ' + msg.question_index + '/' + msg.n_questions + '<span style="color:snow;">' + ' [' + msg.room_id + '] ' + msg.tournament +  '</span>';
+
         // question_title.innerHTML =  "Polish Quizbowl Game with Simultaneous MT"
         // question_title.innerHTML = 'Spanish Quizbowl Game with Simultaneous MT'
     } else {
@@ -538,6 +555,7 @@ function update_interpretation(msg) {
     if (typeof msg.text != 'undefined') {
         question_text = msg.text;
         translation_text = msg.text_trans;
+        translation_type = msg.type_trans;
         update_question_display();
     }
 
@@ -624,7 +642,8 @@ function progress(timeleft, timetotal, is_red) {
         });
     }
     // document.getElementById("bar").innerHTML = Math.floor(timeleft / 60) + ":" + Math.floor(timeleft % 60);
-    document.getElementById("bar").innerHTML = Math.floor(timeleft);
+    // document.getElementById("bar").innerHTML = Math.floor(timeleft);
+    document.getElementById("bar").innerHTML = Math.ceil(timeleft);
     if (timeleft > 0) {
         timer_timeout = setTimeout(function() {
             progress(timeleft - 1, timetotal, is_red);

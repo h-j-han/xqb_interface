@@ -485,7 +485,7 @@ class RoundSession():
         self.question_index = None
         self.all_paused = False
         self.new_question()
-        logger.info(f"{self.room_id_base} [new round] End of the function")
+        # logger.info(f"{self.room_id_base} [new round] End of the function")
 
     def end_of_round(self):
         self.all_paused = True
@@ -505,7 +505,8 @@ class RoundSession():
         print('===================')
         print()
         # pause_msg = f'{self.room_id_base} Round {self.round_number_index+1} complete. Please visit </br><a href="https://cutt.ly/human_ai_spring_novice">https://cutt.ly/human_ai_spring_novice</a></br>for next round room assignment'
-        pause_msg = f'{self.room_id_base} Round {self.round_number_index+1} complete. If you want to try out this interface without a room assignment, please enter 0.'
+        # pause_msg = f'{self.room_id_base} Round {self.round_number_index+1} complete. If you want to try out this interface without a room assignment, please enter 0.'
+        pause_msg = f'{self.room_id_base} Round {self.round_number_index} complete. <br> If you want to try out this interface, please enter 0. <br> Currently available rounds : 1,2 <br> Please enter integer between 0-2.'
         print(pause_msg)
         if len(self.socket_to_player) ==0:
             logger.info(f"No more valid players to play {len(self.socket_to_player)=}, quit the process at end_of_round")
@@ -632,9 +633,9 @@ class RoundSession():
             self.stream_next()
 
         reactor.callLater(SECOND_PER_WORD, calllater)
-        logger.info(f"{self.room_id_base} [new question] End of the function")
+        # logger.info(f"{self.room_id_base} [new question] End of the function")
 
-    def get_display_question(self):
+    def get_display_question(self, show_all=False):
         '''
         Get the current question text for display, both plain and highlighted,
         with visual elements like buzzing bells.
@@ -643,9 +644,12 @@ class RoundSession():
         # text_highlighted = ''
 
         words = self.question.tokens[:self.position]
-        target_pos = self.cache_entry.target_pos
         trans_model = self.cache_entry.trans_model
-        text_trans = ' '.join(self.question.translations[trans_model].split()[:target_pos]) #TODO: bell pos in text_trans
+        if show_all: # end_of_question
+            text_trans = ' '.join(self.question.translations[trans_model].split()) #TODO: bell pos in text_trans
+        else:
+            target_pos = self.cache_entry.target_pos
+            text_trans = ' '.join(self.question.translations[trans_model].split()[:target_pos]) #TODO: bell pos in text_trans
 
         # for i, (x, y) in enumerate(zip(words, highlight)):
         for i, x  in enumerate(words):
@@ -715,7 +719,7 @@ class RoundSession():
             self._buzzing(buzzing_ids, end_of_question)
         else:
             if end_of_question:
-                self.last_chance(6)
+                self.last_chance(8)
             else:
                 self.position += 1
                 self.cache_entry = self.db.query(QantaCache).get((self.question.id, self.avail_trans_model[self.question.randn], self.position))
@@ -743,6 +747,7 @@ class RoundSession():
                     'qid': self.question.id,
                     'text': text_plain,
                     'text_trans': text_trans,
+                    'type_trans': self.avail_trans_model[self.question.randn],
                     'text_highlighted': text_plain,
                     'position': self.position,
                     'length': self.question.length,
@@ -854,7 +859,7 @@ class RoundSession():
             deferred.addTimeout(ANSWER_TIME_OUT, reactor)
             deferred.addCallbacks(callback, errback)
             self.deferreds.append((deferred, condition))
-        logger.info(f"{self.room_id_base} [_buzzing] End of the function")
+        # logger.info(f"{self.room_id_base} [_buzzing] End of the function")
 
     def judge(self, guess):
         answer = self.question.answer.strip().lower()
@@ -935,7 +940,7 @@ class RoundSession():
             self._end_of_question()
         else:
             reactor.callLater(SECOND_PER_WORD * 2, self.stream_next)
-        logger.info(f"{self.room_id_base} [_buzzing_after] End of the function")
+        # logger.info(f"{self.room_id_base} [_buzzing_after] End of the function")
 
     def _end_of_question(self):
         # notify players of end of game and send correct answer
@@ -944,12 +949,12 @@ class RoundSession():
         # show the whole question
         # but show guesses & matches where the question ended
         self.position = self.question.length
-        text_plain, text_highlighted = self.get_display_question()
+        text_plain, text_trans = self.get_display_question(show_all=True)
         matches_plain, matches_highlighted = self.get_display_matches()
 
         history = {
             'header': self.question.answer,
-            'question_text': text_highlighted,
+            'question_text': text_trans,
             'info_text': self.info_text,
             'guesses': self.latest_resume_msg['guesses'],
             'matches': self.latest_resume_msg['matches_highlighted']
@@ -961,7 +966,7 @@ class RoundSession():
             'type': MSG_TYPE_END,
             'qid': self.question.id,
             'text': text_plain,
-            'text_highlighted': text_highlighted,
+            'text_trans': text_trans,
             'position': self.position,
             'length': self.question.length,
             'answer': self.question.answer,

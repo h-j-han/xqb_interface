@@ -102,7 +102,8 @@
     <div class="container-fluid" data-step="1" data-intro="Welcome! Please follow this
     tutorial to get familiar with the interface." data-position='auto'>
         <div class="row" data-step="2" data-intro="This is what the interface might look like in the middle of a question.">
-            <div class="col-md-3">
+            <!-- <div class="col-md-3"> -->
+            <div class="col-md-1">
                 <div class="row mt-3"></br></br></div>
                 <div id="alternatives_card" class="card card-outline-primary mt-3" data-step="6" style="display: None"  data-intro="<b>Alternatives</b> from
                     Qanta are shown here.">
@@ -135,7 +136,8 @@
 
 
             </div>
-            <div class="col-md-5">
+            <!-- <div class="col-md-5"> -->
+            <div class="col-md-10">
                 <div class="row mt-3">
                     <!-- change color or button and progress bar -->
                     <button type="submit" class="btn btn-info"
@@ -161,16 +163,46 @@
     dir="ltr"><input id="answer_area" class="twitter-typeahead tt-input"
     name="answer_area" type="text" placeholder="Press enter to submit" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: system-ui; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><div class="tt-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none;"></div></span></div>
                 </div>
-
+                
+                <!-- <div id="players_card" class="card card-outline-primary mt-3" -->
+                <div id="players_card" style="display: None" class="card card-outline-primary mt-3"
+                    data-step="5" data-intro="Players are shown here. Stat
+                    shows the number of questions answered correctly and
+                    incorrectly. Inactive players are shown in grey.">
+                    <div class="card-body mx-2 my-2"  >
+                        <!-- <h4 class="card-title">Players</h4> -->
+                        <a id="n_active" style="display: None"> 1 active </a>
+                        <table class="table table-sm table-hover" id="players_table">
+                            <thead>
+                                <tr> <th> #</th> <th> Score </th> <th> Name </th> <th> Cor/Neg</th> <th> EW</th></tr>
+                            </thead>
+                            <tbody id="players_tbody">
+                                <tr> <td> 1</td> <td> 100 </td> <td> Trusty Tahr </td> <td> 20/10 </td> <td> 12.41 </td> </tr>
+                                <!-- <tr> <td> 2</td> <td> 75 </td> <td>  Xenial Xerus </td> <td> 18/9 </td> <td> 12.41 </td></tr> -->
+                                <!-- <tr style='color: #c1c1c1'> <td> 3</td> <td> 30 </td> <td> Precise Pangolin </td> <td> 15/7 </td> <td> 12.41 </td> </tr> -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
                 <div class="card card-outline-primary mt-1" data-step="3" data-intro="Questions are displayed here. Both original source and translated target text will be displayed incrementally. Please note that the delivery of the translation text can be either immediate or slow.">
                     <div class="card-body my-2 mx-2">
                         <h4 class="card-title" id="question_title">Question</h4>
-                        <a class="card-text" id="question_area">
-                            <span style="color:silver;"> Source :  <br /> Sygnalista postawił także zarzut, że prawnicy Białego Domu kazali urzędnikom  </span>  <br /> Target  :  <br /> The signalist also accused the lawyers of the White House ordered officials to remove a record of a conversation from <br />
-                        </a>
+                        <div class="row">
+                            <div class="col-md-6">
+                            <a class="card-text" id="question_area_src">
+                                <!-- <span style="color:silver;"> Source :  <br /> Sygnalista postawił także zarzut, że prawnicy Białego Domu kazali urzędnikom  </span>  Can't find the source. where did you get it?--> 
+                                <span style="color:silver;"> Source :  <br /> Gdy obiekty te się rozpadają, w ich pobliżu słychać charakterystyczny dźwięk spowodowany uwalniającym się w postaci bąbelków CO2 . </span> 
+                            </a>
+                            </div>
+                            <div class="col-md-6">
+                            <a class="card-text" id="question_area_tgt">
+                                <!-- Target  :  <br /> The signalist also accused the lawyers of the White House ordered officials to remove a record of a conversation from <br /> -->
+                                Target  :  <br /> As these objects disintegrate, a characteristic sound is heard near them due to the CO2 being<br />
+                            </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
                 <div id="prediction_card_autopilot" class="card card-outline-primary mt-1" data-step="4" data-intro="Machine predictions are displayed here. When it's shown in red, the machine is confident in its prediction." style="display: None" hidden="hidden">
                     <div class="card-body my-2 mx-2">
                         <h5>Guess: <b><span id="prediction_area_autopilot" style="color:red;">Electron</span></b></h5>
@@ -194,7 +226,8 @@
                 </div>
 
             </div>
-            <div class="col-md-4">
+            <!-- <div class="col-md-4"> -->
+            <div class="col-md-1">
                 <div class="row mt-3"></br></br></div>
                 <div id="evidence_card" class="card card-outline-primary mt-3"  style="display: None"
                     data-step="7" data-intro="The <b>evidence</b> of Qanta's prediction
@@ -264,7 +297,7 @@
 
                     </div>
                 </div>
-                <div id="players_card" style="display: None" class="card card-outline-primary mt-3"
+                <!-- <div id="players_card" style="display: None" class="card card-outline-primary mt-3"
                     data-step="10" data-intro="Players are shown here. Stat
                     shows the number of questions answered correctly and
                     incorrectly. Inactive players are shown in grey.">
@@ -282,7 +315,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
