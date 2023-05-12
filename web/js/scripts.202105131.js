@@ -1,6 +1,6 @@
 var sockt;
-// var socket_addr = "ws://simqa.cs.umd.edu:9001";
-var socket_addr = "ws://127.0.0.1:9000";
+var socket_addr = "ws://simqa.cs.umd.edu:9000";
+// var socket_addr = "ws://127.0.0.1:9000";
 // var socket_addr = "ws://play.qanta.org:9000";
 var answer_json_dir = "http://localhost:8000/answers.0515.json";
 // var answer_json_dir = "http://play.qanta.org/answers.0212.json";
@@ -139,7 +139,7 @@ pause_button.onclick = function(event) {
     $('#pause_modal').modal('show');
     if (task_completed) {
         // pause_modal_content.innerHTML = 'Round finished. Please visit </br><a href="https://cutt.ly/human_ai_spring_novice">https://cutt.ly/human_ai_spring_novice</a></br>for next round room assignment.';
-        pause_modal_content.innerHTML = 'Round finished. <br> If you want to try out this interface without a room assignment, please enter 0.';
+        pause_modal_content.innerHTML = 'Round finished or New Start. <br> If you want to try out this interface, please enter 0. <br> Currently available rounds : 1,2,3,4,5,6,7,8,9,10. <br> Please enter integer between 0-10.';
     }
     clearTimeout(timer_timeout);
     timer_set = false;

@@ -267,7 +267,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
                         
                         if chosen_round != 0:
                             # TODO: weird
-                            self.socket_to_round[client.peer].new_round(chosen_round - 1)
+                            self.socket_to_round[client.peer].new_round(chosen_round)
                             aa=0
                         else:
                             self.socket_to_round[client.peer].new_round()
@@ -337,7 +337,7 @@ class RoundSession():
     def __init__(self, db, room_number=0, new_player=None):
         self.db = db
 
-        self.round_number_list = [0, 1,2]
+        self.round_number_list = [0, 1,2,3,4,5,6,7,8,9,10]
         # self.round_number_list = [1]
         self.round_number_index = None
         self.question_index = None
