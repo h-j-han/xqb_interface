@@ -345,7 +345,8 @@ class RoundSession():
     def __init__(self, db, room_number=0, new_player=None):
         self.db = db
 
-        self.round_number_list = [0, 1,2,3,4,5,6,7,8,9,10]
+        # self.round_number_list = [0, 1,2,3,4,5,6,7,8,9,10]
+        self.round_number_list = [10, 9,8,7,6,5,4,3,2,1,0]
         # self.round_number_list = [1]
         self.round_number_index = None
         self.question_index = None

@@ -79,6 +79,7 @@ Table(
     Column('qb_score', Integer),
     Column('ew_score', Float),
     Column('explanation_config', String),
+    Column('translation_type', String),
     Column('mediator_name', String),
     Column('room_id', String),
     Column('player_list', JSONB),
