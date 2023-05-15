@@ -28,6 +28,7 @@ Table(
     Column('ip_addr', String, index=True),
     Column('name', String),
     Column('email', String),
+    Column('llevel', String),
     Column('mediator_name', String),
     Column('score', Integer),
     Column('questions_seen', JSONB),

@@ -10,6 +10,7 @@ class Player(Base):
     ip_addr = Column(String, index=True)
     name = Column(String)
     email = Column(String, index=True)
+    llevel = Column(String)
     mediator_name = Column(String)
     score = Column(Integer)
     questions_seen = Column(JSONB)

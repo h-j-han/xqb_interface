@@ -85,6 +85,7 @@ class PlayerClient:
         player_id: str = None,
         player_name: str = None,
         player_email: str = None,
+        player_llevel: str = None,
     ):
         self.client = client
 
@@ -97,9 +98,13 @@ class PlayerClient:
         if player_email is None:
             player_email = f'{player_name}@qanta.org'
 
+        if player_llevel is None:
+            player_llevel = '-1'
+
         self.player_id = player_id
         self.player_name = player_name
         self.player_email = player_email
+        self.player_llevel = player_llevel
 
         self.active = True
         self.buzzed = False
@@ -145,6 +150,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
         self.all_paused = True 
         self.deferreds = []
         self.tournament_str = f'xqb_feetthinking_round'
+        self.round_number_list = [5,6,7,8,9,10,1,2,3,4]
         self.tmpquestions = self.db.query(Question).filter(Question.tournament.startswith(self.tournament_str + '_00')).all()
         self.tmpquestion =self.tmpquestions[0]
     def check_player_response(self, player, key, value):
@@ -166,6 +172,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
                 'player_id': new_player.player_id,
                 'player_name': new_player.player_name,
                 'player_email': new_player.player_email,
+                'player_llevel': new_player.player_llevel,
             }
             logger.info(f"{msg}")
             new_player.sendMessage(msg)
@@ -175,6 +182,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
                     player_id = new_player.response['player_id']
                     player_name = new_player.response['player_name']
                     player_email = new_player.response['player_email']
+                    player_llevel = new_player.response['player_llevel']
                     if player_id in self.players:
                         # same player_id exists
                         old_peer = self.players[player_id].client.peer
@@ -182,9 +190,10 @@ class BroadcastServerFactory(WebSocketServerFactory):
                         self.players[player_id].client = client
                         self.players[player_id].player_name = player_name
                         self.players[player_id].player_email = player_email
+                        self.players[player_id].player_llevel = player_llevel
                         self.socket_to_player.pop(old_peer, None)
                         self.players[player_id].active = True
-                        logger.info(f"{self.room_id_base} [register] old player {player_name} {player_email} ({old_peer} -> {client.peer}) {player_id=}")
+                        logger.info(f"{self.room_id_base} [register] old player {player_name} {player_email} ({old_peer} -> {client.peer}) {player_id=} {player_llevel=}")
                         if old_peer in self.socket_to_round:
                             logger.info(f"{self.socket_to_round}")
                             roundsession = self.socket_to_round.pop(old_peer)
@@ -196,6 +205,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
                         new_player.player_id = player_id
                         new_player.player_name = player_name
                         new_player.player_email = player_email
+                        new_player.player_llevel = player_llevel
                         new_player.position_start = 0 # self.position
                         self.players[player_id] = new_player
 
@@ -213,6 +223,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
                                 ip_addr=new_player.client.peer,
                                 name=new_player.player_name,
                                 email=new_player.player_email,
+                                llevel=new_player.player_llevel,
                                 mediator_name=new_player.mediator.__class__.__name__,
                                 score=0,
                                 questions_seen=[],
@@ -221,7 +232,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
                             )
                             self.db.add(player_in_db)
                             self.db.commit()
-                        logger.info(f"{self.room_id_base} [register] new player {player_name} {player_email} ({client.peer}) {player_id=}")
+                        logger.info(f"{self.room_id_base} [register] new player {player_name} {player_email} ({client.peer}) {player_id=} {player_llevel=}")
 
                     if new_player.response.get('start_new_round', False):
                         self.all_paused = False
@@ -261,24 +272,11 @@ class BroadcastServerFactory(WebSocketServerFactory):
                     #     self.players[player_id].sendMessage(self.latest_buzzing_msg)
 
                     if new_player.response.get('start_new_round', False):
-                        chosen_round_text = new_player.response.get('chosen_round', 0)
-                        chosen_round = int(chosen_round_text)
-                        # new_player.sendMessage({
-                        #     'type': MSG_TYPE_COMPLETE,
-                        #     'message': "Input should be integer!",
-                        # })
-                        # next round index = chosen_round - 1
-                        # if chosen_round is 0, go to default next round
-                        self.socket_to_round[client.peer] = RoundSession(self.db, self.room_number, self.players[player_id])
+                        chosen_round = int(new_player.response.get('chosen_round', 0))
+                        self.socket_to_round[client.peer] = RoundSession(self.db, self.room_number, self.players[player_id], round_number_list=self.round_number_list)
                         self.room_number += 1
-                        
-                        if chosen_round != 0:
-                            # TODO: weird
-                            self.socket_to_round[client.peer].new_round(chosen_round)
-                            aa=0
-                        else:
-                            self.socket_to_round[client.peer].new_round()
-                            aa=0
+                        self.socket_to_round[client.peer].new_round(chosen_round)
+
 
                 except Exception:
                     traceback.print_exc(file=sys.stdout)
@@ -342,11 +340,11 @@ class BroadcastServerFactory(WebSocketServerFactory):
                 ids.append(i)
         self.deferreds = [self.deferreds[i] for i in ids]
 class RoundSession():
-    def __init__(self, db, room_number=0, new_player=None):
+    def __init__(self, db, room_number=0, new_player=None, round_number_list=None):
         self.db = db
 
         # self.round_number_list = [0, 1,2,3,4,5,6,7,8,9,10]
-        self.round_number_list = [10, 9,8,7,6,5,4,3,2,1,0]
+        self.round_number_list = round_number_list
         # self.round_number_list = [1]
         self.round_number_index = None
         self.question_index = None
@@ -456,7 +454,7 @@ class RoundSession():
             explanation_config['allow_player_choice'] = ALLOW_PLAYER_CHOICE
             player.explanation_config = explanation_config
 
-    def new_round(self, chosen_round=None):
+    def new_round(self, chosen_round):
         if chosen_round is not None:
             self.round_number_index = chosen_round
             assert self.round_number_index >= 0
@@ -507,7 +505,11 @@ class RoundSession():
         print()
         # pause_msg = f'{self.room_id_base} Round {self.round_number_index+1} complete. Please visit </br><a href="https://cutt.ly/human_ai_spring_novice">https://cutt.ly/human_ai_spring_novice</a></br>for next round room assignment'
         # pause_msg = f'{self.room_id_base} Round {self.round_number_index+1} complete. If you want to try out this interface without a room assignment, please enter 0.'
-        pause_msg = f'{self.room_id_base} Round {self.round_number_index} complete. <br> If you want to try out this interface, please enter 0. <br> Currently available rounds : 1,2 <br> Please enter integer between 0-2.'
+        if self.round_number_index == 0:
+            roundtext = 'test'
+        else:
+            roundtext = self.round_number_index
+        pause_msg = f'{self.room_id_base} Round [{roundtext}] complete. <br> If you want to try out this interface, please enter "test". <br> Currently available rounds : 1,2.'
         print(pause_msg)
         if len(self.socket_to_player) ==0:
             logger.info(f"No more valid players to play {len(self.socket_to_player)=}, quit the process at end_of_round")

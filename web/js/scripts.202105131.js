@@ -1,6 +1,7 @@
 var sockt;
 // var socket_addr = "ws://simqa.cs.umd.edu:9000";
-var socket_addr = "ws://127.0.0.1:9000";
+// var socket_addr = "ws://127.0.0.1:9002";
+var socket_addr = "ws://localhost:56021";
 // var socket_addr = "ws://play.qanta.org:9000";
 var answer_json_dir = "http://localhost:8000/answers.0515.json";
 // var answer_json_dir = "http://play.qanta.org/answers.0212.json";
@@ -30,6 +31,7 @@ var SECOND_PER_WORD = 0.3;
 var accept_button      = document.getElementById("accept_button");
 var username_area      = document.getElementById("choose_user_name");
 var email_area         = document.getElementById("emailAddress");
+var radios             = document.getElementsByName("level_number");
 // var question_area      = document.getElementById("question_area");
 var question_area_src      = document.getElementById("question_area_src");
 var question_area_tgt      = document.getElementById("question_area_tgt");
@@ -129,6 +131,14 @@ function deleteAllCookies() {
         document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
     }
 }
+function getSelectedRoundNumber() {
+    for (var i = 0; i < radios.length; i++) {
+        if (radios[i].checked) {
+            return radios[i].value;
+        }
+    }
+    return -1;
+}
 
 // logout_button.onclick = function(event) {
 //     deleteAllCookies();
@@ -141,7 +151,7 @@ pause_button.onclick = function(event) {
     $('#pause_modal').modal('show');
     if (task_completed) {
         // pause_modal_content.innerHTML = 'Round finished. Please visit </br><a href="https://cutt.ly/human_ai_spring_novice">https://cutt.ly/human_ai_spring_novice</a></br>for next round room assignment.';
-        pause_modal_content.innerHTML = 'New Start. <br> If you want to try out this interface, please enter 0. <br> Currently available rounds : 1,2 <br> Please enter integer between 0-2.';
+        pause_modal_content.innerHTML = 'New Start. <br> If you want to try out this interface, please enter "test". <br> Currently available rounds : 1,2.';
     }
     clearTimeout(timer_timeout);
     timer_set = false;
@@ -164,6 +174,7 @@ resume_button.onclick = function(event) {
 var player_name = getCookie("player_name");
 var player_id = getCookie("player_id");
 var player_email = getCookie("player_email");
+var player_llevel = getCookie("player_llevel");
 var consent_accepted = getCookie("consent_accepted");
 
 introJs.fn.oncomplete(function() {start();});
@@ -188,6 +199,13 @@ if (consent_accepted == "N_O_T_S_E_T") {
             player_email= email;
         } else {
             setCookie("player_email", "N_O_T_S_E_T");
+        }
+        var llevel = getSelectedRoundNumber();
+        if (llevel.length > 0) {
+            setCookie("player_llevel", llevel);
+            player_llevel= llevel;
+        } else {
+            setCookie("player_llevel", "N_O_T_S_E_T");
         }
         setCookie("player_id", "N_O_T_S_E_T");
         setCookie("consent_accepted", "True");
@@ -371,7 +389,7 @@ function new_question(msg) {
         // question_title.innerHTML = '[' + msg.room_id + '] ' +'(' + msg.test_text + ') ' + msg.tournament + ' Question ' + msg.question_index + '/' + msg.n_questions;
         // question_title.innerHTML = '[' + msg.room_id + '] '  + ' Question ' + msg.question_index + '/' + msg.n_questions;
 
-        question_title.innerHTML = 'Question ' + msg.question_index + '/' + msg.n_questions ; //+ '<span style="color:snow;">' + ' [' + msg.room_id + '] ' + msg.tournament +  '</span>';
+        question_title.innerHTML = 'Round ['+ chosen_round + '] '+'Question ' + msg.question_index + '/' + msg.n_questions ; //+ '<span style="color:snow;">' + ' [' + msg.room_id + '] ' + msg.tournament +  '</span>';
         // question_title.innerHTML = 'Question ' + msg.question_index + '/' + msg.n_questions + '<span style="color:snow;">' + ' [' + msg.room_id + '] ' + msg.tournament +  '</span>';
 
         // question_title.innerHTML =  "Polish Quizbowl Game with Simultaneous MT"
@@ -420,19 +438,23 @@ function new_question(msg) {
             qid: msg.qid,
             player_name: player_name,
             player_email: player_email,
+            player_llevel: player_llevel,
             player_id: player_id,
             start_new_round: true,
             testext: 'asdf' + msg.test_text,
             chosen_round: chosen_round,
         };
         start_new_round = false;
-        chosen_round = 0;
+        if (chosen_round === "0") {
+            chosen_round = "test";
+        }
     } else {
         var m = {
             type: MSG_TYPE_NEW,
             qid: msg.qid,
             player_name: player_name,
             player_email: player_email,
+            player_llevel: player_llevel,
             testext: 'qwer' + msg.test_text,
             player_id: player_id,
         };
@@ -703,6 +725,13 @@ function start() {
                 player_id = msg.player_id;
                 console.log('set player id', player_id);
                 setCookie("player_id", player_id);
+            }
+        }
+        if (typeof msg.player_llevel != 'undefined') {
+            if (player_llevel == "N_O_T_S_E_T") {
+                player_llevel = msg.player_llevel;
+                console.log('set player email', player_llevel);
+                setCookie("player_llevel", player_llevel);
             }
         }
         if (msg.type === MSG_TYPE_NEW) {
