@@ -151,7 +151,7 @@ pause_button.onclick = function(event) {
     $('#pause_modal').modal('show');
     if (task_completed) {
         // pause_modal_content.innerHTML = 'Round finished. Please visit </br><a href="https://cutt.ly/human_ai_spring_novice">https://cutt.ly/human_ai_spring_novice</a></br>for next round room assignment.';
-        pause_modal_content.innerHTML = 'New Start. <br> If you want to try out this interface, please enter "test". <br> Currently available rounds : 1,2.';
+        pause_modal_content.innerHTML = 'New Start. <br> If you want to try out this interface, please enter "test". <br> Currently available rounds : 1,2. <br> Please start round 1.';
     }
     clearTimeout(timer_timeout);
     timer_set = false;

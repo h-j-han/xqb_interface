@@ -149,8 +149,8 @@ class BroadcastServerFactory(WebSocketServerFactory):
         self.room_id_base = "ready room"
         self.all_paused = True 
         self.deferreds = []
-        self.tournament_str = f'xqb_feetthinking_round'
-        self.round_number_list = [5,6,7,8,9,10,1,2,3,4]
+        self.tournament_str = f'xqb_prolific_round'
+        self.round_number_list = [0,1,2,3,4,5,6,7,8,9]
         self.tmpquestions = self.db.query(Question).filter(Question.tournament.startswith(self.tournament_str + '_00')).all()
         self.tmpquestion =self.tmpquestions[0]
     def check_player_response(self, player, key, value):
@@ -273,7 +273,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
 
                     if new_player.response.get('start_new_round', False):
                         chosen_round = int(new_player.response.get('chosen_round', 0))
-                        self.socket_to_round[client.peer] = RoundSession(self.db, self.room_number, self.players[player_id], round_number_list=self.round_number_list)
+                        self.socket_to_round[client.peer] = RoundSession(self.db, self.room_number, self.players[player_id], round_number_list=self.round_number_list, tournament_str=self.tournament_str)
                         self.room_number += 1
                         self.socket_to_round[client.peer].new_round(chosen_round)
 
@@ -340,16 +340,17 @@ class BroadcastServerFactory(WebSocketServerFactory):
                 ids.append(i)
         self.deferreds = [self.deferreds[i] for i in ids]
 class RoundSession():
-    def __init__(self, db, room_number=0, new_player=None, round_number_list=None):
+    def __init__(self, db, room_number=0, new_player=None, round_number_list=None, tournament_str=None):
         self.db = db
 
         # self.round_number_list = [0, 1,2,3,4,5,6,7,8,9,10]
         self.round_number_list = round_number_list
+        self.tournament_str = tournament_str
         # self.round_number_list = [1]
         self.round_number_index = None
         self.question_index = None
         self.question = None
-
+        self.prolific_code = "CT264Z2Q"
         self.socket_to_player = dict()  # client.peer -> Player
         self.players = dict()  # player_id -> Player
         self.socket_to_player[new_player.client.peer] = new_player
@@ -469,7 +470,7 @@ class RoundSession():
         round_number = self.round_number_list[self.round_number_index]
         round_str = f'0{round_number}' if round_number < 10 else str(round_number)
         # tournament_str = f'xqb_initial_round_{round_str}'
-        tournament_str = f'xqb_feetthinking_round_{round_str}'
+        tournament_str = f'{self.tournament_str}_{round_str}'
         self.questions = self.db.query(Question).filter(Question.tournament.startswith(tournament_str)).all()
         logger.info('*********** new round *************')
         logger.info(f'{self.room_id_base} Loaded {len(self.questions)} questions for {tournament_str} (round {self.round_number_index + 1})')
@@ -509,7 +510,10 @@ class RoundSession():
             roundtext = 'test'
         else:
             roundtext = self.round_number_index
-        pause_msg = f'{self.room_id_base} Round [{roundtext}] complete. <br> If you want to try out this interface, please enter "test". <br> Currently available rounds : 1,2.'
+        if self.round_number_index == 2:
+            pause_msg = f'{self.room_id_base} Round [{roundtext}] complete. <br> If you want to try out this interface, please enter "test". <br> Currently available rounds : 1,2.<br>  End of the available round. Completion code : {self.prolific_code} .<br>  You should finish all two rounds.'
+        else:
+            pause_msg = f'{self.room_id_base} Round [{roundtext}] complete. <br> If you want to try out this interface, please enter "test". <br> Currently available rounds : 1,2.<br> If you finished round 1, then please continue round 2.'
         print(pause_msg)
         if len(self.socket_to_player) ==0:
             logger.info(f"No more valid players to play {len(self.socket_to_player)=}, quit the process at end_of_round")
@@ -1085,7 +1089,7 @@ class RoundSession():
 
 
 if __name__ == '__main__':
-    factory = BroadcastServerFactory(u"ws://127.0.0.1:9000")
+    factory = BroadcastServerFactory(u"ws://127.0.0.1:56021")
     factory.protocol = BroadcastServerProtocol
     listenWS(factory)
 
