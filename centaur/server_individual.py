@@ -350,7 +350,7 @@ class RoundSession():
         self.round_number_index = None
         self.question_index = None
         self.question = None
-        self.prolific_code = "CT264Z2Q"
+        self.prolific_code = "CD8CAZ6U"
         self.socket_to_player = dict()  # client.peer -> Player
         self.players = dict()  # player_id -> Player
         self.socket_to_player[new_player.client.peer] = new_player
@@ -510,10 +510,13 @@ class RoundSession():
             roundtext = 'test'
         else:
             roundtext = self.round_number_index
-        if self.round_number_index == 2:
-            pause_msg = f'{self.room_id_base} Round [{roundtext}] complete. <br> If you want to try out this interface, please enter "test". <br> Currently available rounds : 1,2.<br>  End of the available round. Completion code : {self.prolific_code} .<br>  You should finish all two rounds.'
-        else:
-            pause_msg = f'{self.room_id_base} Round [{roundtext}] complete. <br> If you want to try out this interface, please enter "test". <br> Currently available rounds : 1,2.<br> If you finished round 1, then please continue round 2.'
+        if self.round_number_index == 1: # current prolific
+            pause_msg = f'{self.room_id_base} Round [{roundtext}] complete. <br>  End of the available round. Completion code : {self.prolific_code} .' #<br>  You should finish all two rounds.'
+        elif self.round_number_index == 0: #test
+            pause_msg = f'{self.room_id_base} Round [{roundtext}] complete. <br> Currently available rounds : 1. <br> Please start round 1.' #<br> If you finished round 1, then please continue round 2.'
+        elif self.round_number_index == 2:
+            pause_msg = f'{self.room_id_base} Round [{roundtext}] complete. Current round is not for prolific. <br> Currently available rounds : 1 . <br> Please start round 1.' #<br> If you finished round 1, then please continue round 2.'
+            # pause_msg = f'{self.room_id_base} Round [{roundtext}] complete. <br> If you want to try out this interface, please enter "test". <br> Currently available rounds : 1 .' #<br> If you finished round 1, then please continue round 2.'
         print(pause_msg)
         if len(self.socket_to_player) ==0:
             logger.info(f"No more valid players to play {len(self.socket_to_player)=}, quit the process at end_of_round")
@@ -1089,7 +1092,7 @@ class RoundSession():
 
 
 if __name__ == '__main__':
-    factory = BroadcastServerFactory(u"ws://127.0.0.1:56021")
+    factory = BroadcastServerFactory(u"ws://127.0.0.1:9000")
     factory.protocol = BroadcastServerProtocol
     listenWS(factory)
 

@@ -44,11 +44,11 @@
               </div></br>
               <form id="gform" method="POST" class="pure-form pure-form-stacked"
                     action="https://script.google.com/macros/s/AKfycbwD2r1mQgJMmMjV2R6lWuKrv9zeUM9hgGqsl5XfoVO24tJ-2rE/exec">
+                    <div class="form-group">
+                      <input type="text" class="form-control" id="choose_user_name" name="name" placeholder="Prolific ID">
+                    </div>
                   <div class="form-group">
-                  <input id="emailAddress" type="email" class="form-control" name="email" placeholder="Email">
-                  </div>
-                  <div class="form-group">
-                    <input type="text" class="form-control" id="choose_user_name" name="name" placeholder="Screen name">
+                  <input id="emailAddress" type="email" class="form-control" name="email" placeholder="Email(optional)">
                   </div>
                   <div style="text-align:left;">Please also provide your Polish proficiency.</div>
                   <div id="choose_polish_proficiency" class="form-control">
@@ -91,7 +91,7 @@
               <select class="form-control" id="choose_round_number" name="round_number">
                 <option value="0">test</option>
                 <option value="1">1</option>
-                <option value="2">2</option>
+                <!-- <option value="2">2</option> -->
               </select>
             </div>
             <button type="submit" class="btn btn-primary" id="resume_button" data-dismiss="modal">Resume</button>
